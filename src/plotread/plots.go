@@ -11,14 +11,7 @@ import (
 )
 
 // Take in a table of TFlow values and plot them to a png of given outname.
-func PlotData(table []TFlow, outname string) error {
-
-	data := make(plotter.XYs, len(table))
-
-	for i := range data {
-		data[i].X = float64(table[i].Hour)
-		data[i].Y = float64(table[i].Count0 + table[i].Count1)
-	}
+func PlotData(data plotter.XYs, outname string) error {
 
 	p := plot.New()
 	p.Title.Text = "Traffic flows"
@@ -43,4 +36,28 @@ func PlotData(table []TFlow, outname string) error {
 	}
 
 	return nil
+}
+
+// Populate time series with traffic data
+func populateTraffic(table []TFlow) plotter.XYs {
+	data := make(plotter.XYs, len(table))
+
+	for i := range data {
+		data[i].X = float64(table[i].Hour)
+		data[i].Y = float64(table[i].Count0 + table[i].Count1)
+	}
+
+	return data
+}
+
+// Populate time series with CO2 data
+func populateAir(table []AQual) plotter.XYs {
+	data := make(plotter.XYs, len(table))
+
+	for i := range data {
+		data[i].X = float64(table[i].Hour)
+		data[i].Y = float64(table[i].CO2)
+	}
+
+	return data
 }

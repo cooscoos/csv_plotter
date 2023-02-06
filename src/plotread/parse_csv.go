@@ -2,20 +2,31 @@ package plotread
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io"
+	"log"
+	"os"
 
 	"github.com/jszwec/csvutil"
 )
 
-// Parse data from r and return a table of unmarshaled values.
-func ParseData(r io.Reader) ([]TFlow, error) {
+// Parse data from filename and return a table of unmarshaled values.
+// Generics should be constrained here and defined in schema.go.
+func ParseData[T TFlow | AQual](filename string) ([]T, error) {
 
-	var table []TFlow
+	file, err := os.Open(fmt.Sprintf("Data/%v.csv", filename))
 
-	csvReader := csv.NewReader(r)
-	dec, err := csvutil.NewDecoder(csvReader)
 	if err != nil {
-		return make([]TFlow, 0), err
+		log.Panic(err)
+	}
+
+	var table []T
+
+	csvReader := csv.NewReader(file)
+	dec, err := csvutil.NewDecoder(csvReader)
+
+	if err != nil {
+		return []T{}, err
 	}
 
 	// Read in header to get past it. We won't need it, so don't store.
@@ -23,15 +34,14 @@ func ParseData(r io.Reader) ([]TFlow, error) {
 
 	// Read in and unmarshal the remaining rows
 	for {
-		var u TFlow
+		var u T
 		if err := dec.Decode(&u); err == io.EOF {
 			break
 		} else if err != nil {
-			return []TFlow{}, err
+			return []T{}, err
 		}
 		table = append(table, u)
 	}
 
 	return table, nil
-
 }
