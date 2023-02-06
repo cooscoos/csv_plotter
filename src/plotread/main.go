@@ -7,6 +7,7 @@ import (
 	"gonum.org/v1/plot/plotter"
 )
 
+// Convert air quality or traffic flow csv into a plot, saving in ./Output
 func PlotCsv(filename string) error {
 
 	var data plotter.XYs
@@ -36,10 +37,9 @@ func PlotCsv(filename string) error {
 			return err
 		}
 		data = populateAir(table)
-
 	}
 
-	// Plot data and save to ./Output/test with the same name as input csv
+	// Plot data and save to ./Output with the same name as input csv
 	if PlotData(data, filename) != nil {
 		return err
 	}
