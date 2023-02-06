@@ -1,4 +1,4 @@
-module traffic_data
+module csv_plotter
 
 go 1.20
 
